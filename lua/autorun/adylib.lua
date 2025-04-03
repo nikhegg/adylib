@@ -2,7 +2,8 @@ local VERSION = "1.0"
 ADYLIB = {}
 
 local f = {
-    {n="ext/cl_melons_masks.lua",t="c"},
+    {n="ady/ady_sxml.lua",t="sh"},
+    {n="ext/cl_melons_masks.lua",t="c"}
 }
 for k,v in ipairs(f) do
     if SERVER then
@@ -22,7 +23,7 @@ function ADYLIB.Random:GetRandomString(length, params)
         Params = {
             symbols: true/false,
             numbers: true/false,
-            smalls: true,false
+            smalls: true/false,
             capitals: true/false,
         }
     ]]
