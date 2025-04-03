@@ -58,14 +58,13 @@ function ADYLIB:DownloadImage(url, callback)
     if file.Exists(filePath, "DATA") then
         if not ImageCache:HasMaterial(url) then ImageCache:CacheMaterial(url, filePath) end
         local material = ImageCache:GetMaterial(url)
-        if callback ~= nil then callback(material) end
+        if callback ~= nil then callback(material, "data/" .. filePath) end
     else
         http.Fetch(url, function(body, size, headers, code)
             if code == 200 and body and body ~= "" then
                 file.Write(filePath, body)
                 local material = ImageCache:CacheMaterial(url, filePath)
-                print(material)
-                if callback ~= nil then callback(material) end
+                if callback ~= nil then callback(material, "data/" .. filePath) end
             else
                 print("Ошибка загрузки изображения. Код: " .. code)
             end
