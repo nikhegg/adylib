@@ -34,7 +34,8 @@ function ADYLIB.Random:GetRandomString(length, params)
         if params.capitals then chars = chars .. capitals end
         if params.numbers then chars = chars .. numbers end
         if params.symbols then chars = chars .. symbols end
-    else
+    end
+    if #chars == 0 then
         chars = smalls .. capitals .. numbers
     end
 
@@ -49,6 +50,14 @@ end
 
 function ADYLIB:CyrillicStringLength(str)
     return #(str:gsub('[\128-\191]',''))
+end
+function ADYLIB:StringCharSplit(str)
+    local chars = {}
+    -- Используем UTF-8 aware pattern для разбора символов
+    for uchar in string.gmatch(str, "[%z\1-\127\194-\244][\128-\191]*") do
+        table.insert(chars, uchar)
+    end
+    return chars
 end
 
 function ADYLIB:GetVersion()

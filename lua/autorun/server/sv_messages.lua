@@ -29,6 +29,10 @@ function Meta:SetDefaultColor(color)
 	return self
 end
 
+function Meta:GetDefaultColor()
+	return self.default_color
+end
+
 function Meta:Send(players)
 	net.Start("ADY:Message")
 	for k, msg in pairs(self.msgs) do

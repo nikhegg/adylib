@@ -51,6 +51,7 @@ local fontParams = {
     end,
 }
 function ADYLIB:CreateFont(tbl)
+    tbl.size = ADYLIB:ScaleUI(tbl.size)
     local name = tbl.font .. "-" .. tbl.size
     
     for k,changeFunc in pairs(fontParams) do
