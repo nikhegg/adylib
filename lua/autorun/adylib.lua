@@ -3,6 +3,7 @@ ADYLIB = {}
 
 local f = {
     {n="ady/ady_sxml.lua",t="sh"},
+    {n="ady/ady_messages.lua",t="sh"},
     {n="ext/cl_melons_masks.lua",t="c"}
 }
 for k,v in ipairs(f) do
@@ -18,15 +19,18 @@ local smalls = "abcdefghijklmnopqrstuvwxyz"
 local capitals = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 local numbers = "0123456789"
 local symbols = "!@#$%^&*-_+="
+
+---@class RandomStringParams
+---@field capitals boolean|nil
+---@field numbers boolean|nil
+---@field smalls boolean|nil
+---@field symbols boolean|nil
+
+--- **[Server/Client]** Returns random string of specified length. Use `params` to customize the generation.
+---@param length number
+---@param params RandomStringParams
+---@return string
 function ADYLIB.Random:GetRandomString(length, params)
-    --[[
-        Params = {
-            symbols: true/false,
-            numbers: true/false,
-            smalls: true/false,
-            capitals: true/false,
-        }
-    ]]
     local chars
     if params then
         chars = ""
@@ -48,9 +52,11 @@ function ADYLIB.Random:GetRandomString(length, params)
     return str
 end
 
+--- **[Server/Client]** Returns the length of any string counting cyrillic symbols as one instead of two.
 function ADYLIB:CyrillicStringLength(str)
     return #(str:gsub('[\128-\191]',''))
 end
+
 function ADYLIB:StringCharSplit(str)
     local chars = {}
     -- Используем UTF-8 aware pattern для разбора символов
@@ -60,6 +66,8 @@ function ADYLIB:StringCharSplit(str)
     return chars
 end
 
+--- **[Server/Client]** Return the version of AdyLib
+--- @return string
 function ADYLIB:GetVersion()
     return VERSION
 end
