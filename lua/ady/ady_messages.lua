@@ -40,6 +40,8 @@ function MessageBuilder:GetDefaultColor()
 end
 
 if SERVER then
+    util.AddNetworkString("ADY:Message")
+
     --- **[Server]** Send built message to player or players.
     --- 
     --- **DO NOT** pass any argument if you want the message to be sent to any user.
@@ -92,10 +94,10 @@ end
 --- 
 --- Argument should be a table with strict construction:
 --- `{[1] = {text="Any string", color=Color(a,b,c,d)}, [2] = {...}, ...}`
----@name ADYLIB:Msg
+---@name ADYLIB:Message
 ---@param msgs (string|Color)[]
 ---@return MessageBuilder MessageBuilder instance of Message to generate
-function ADYLIB:Msg(msgs)
+function ADYLIB:Message(msgs)
     local object = {}
     object.msgs = msgs or {}
     setmetatable(object, MessageBuilder)
