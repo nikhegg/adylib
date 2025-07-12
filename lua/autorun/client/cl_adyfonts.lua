@@ -50,6 +50,24 @@ local fontParams = {
         return name .. "-SL" .. scanlines
     end,
 }
+
+--- **[Client]** `ADYLIB:CreateFont` is an alternative approach to Garry's Mod fonts. 
+--- This method allows you not to create a name for your font. 
+--- It generates the name by font parameters instead.
+--- 
+--- ```
+--- local titleFont = ADYLIB:CreateFont({
+---     font="Arial",
+---     size=32,
+---     antialias=true
+--- })
+--- label:SetFont(titleFont)
+--- ```
+--- 
+--- This method will be useful when you use the same font in different files and it's not guaranteed that required font exists.
+--- It also prevents you from generating same fonts with different names.
+---@param tbl FontData
+---@returns name string
 function ADYLIB:CreateFont(tbl)
     tbl.size = ADYLIB:ScaleUI(tbl.size)
     local name = tbl.font .. "-" .. tbl.size

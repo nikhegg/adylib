@@ -21,14 +21,14 @@ local numbers = "0123456789"
 local symbols = "!@#$%^&*-_+="
 
 ---@class RandomStringParams
----@field capitals boolean|nil
----@field numbers boolean|nil
----@field smalls boolean|nil
----@field symbols boolean|nil
+---@field capitals? boolean
+---@field numbers? boolean
+---@field smalls? boolean
+---@field symbols? boolean
 
 --- **[Server/Client]** Returns random string of specified length. Use `params` to customize the generation.
 ---@param length number
----@param params RandomStringParams
+---@param params? RandomStringParams
 ---@return string
 function ADYLIB.Random:GetRandomString(length, params)
     local chars
@@ -59,7 +59,6 @@ end
 
 function ADYLIB:StringCharSplit(str)
     local chars = {}
-    -- Используем UTF-8 aware pattern для разбора символов
     for uchar in string.gmatch(str, "[%z\1-\127\194-\244][\128-\191]*") do
         table.insert(chars, uchar)
     end

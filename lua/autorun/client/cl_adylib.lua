@@ -5,22 +5,38 @@ local UI_SCALE = {
     x = nil,
     y = nil
 }
+--- **[Client]** Recalculates screen scaling coefficients based on the current resolution.
+--- 
+--- **Note: Normally called automatically - avoid manual calls unless necessary.**
 function ADYLIB:CalcScales()
     UI_SCALE.x = ScrW()/1920
     UI_SCALE.y = ScrH()/1080
 end
 ADYLIB:CalcScales()
--- Should be used to calc the width of window or panel with dynamic size
-function ADYLIB:ScaleX()
-    return UI_SCALE.x
+--- **[Client]** Scales a given pixel value proportionally based on the player's screen width.
+--- 
+--- In case you need to preserve aspect ratio, use `ADYLIB:ScaleUI(pixels)` instead.
+---@param pixels any
+---@return number
+function ADYLIB:ScaleX(pixels)
+    return UI_SCALE.x * pixels
 end
--- Should be used to calc the height of window or panel with dynamic size
-function ADYLIB:ScaleY()
-    return UI_SCALE.y
+--- **[Client]** Scales a given pixel value proportionally based on the player's screen height.
+--- 
+--- In case you need to preserve aspect ratio, use `ADYLIB:ScaleUI(pixels)` instead.
+--- @param pixels number
+--- @return number
+function ADYLIB:ScaleY(pixels)
+    return UI_SCALE.y * pixels
 end
--- Should be used to calc size of elements with static size
+--- **[Client]** Scales a given pixel value proportionally based on the player's screen resolution, preserving aspect ratio.
+---
+--- Use this method to adapt UI elements designed for 1920x1080 to other screen sizes.
+---@param pixels number
+---@return number
 function ADYLIB:ScaleUI(pixels)
     local scale = math.min(UI_SCALE.x, UI_SCALE.y)
+    if not scale then return 0 end -- Meaningless thing to be honest...
     if pixels ~= nil and type(pixels) == "number" then
         return scale * pixels
     else
@@ -32,6 +48,14 @@ hook.Add("OnScreenSizeChanged", "AdyLib/ScreenResize", function()
 end)
 
 -- Colors
+
+--- **[Client]** Transforms any RGB color format to Garry's Mod Color class.
+--- It is allowed to pass either existing color or R,G,B values as separate arguments.
+---@param r number|table
+---@param g? number
+---@param b? number
+---@param a? number
+---@return Color
 function ADYLIB:ToGModColor(r,g,b,a)
     if type(r) ~= "number" then
         if r == nil then
@@ -52,6 +76,10 @@ function ADYLIB:ToGModColor(r,g,b,a)
     if a == nil or type(a) ~= "number" then a = 0 end
     return Color(r,g,b,a)
 end
+--- **[Client]** Returns a smoothly transitioning rainbow color based on the current time.
+--- Useful for generating animated color effect when called every frame.
+---@param speed? number
+---@return Color
 function ADYLIB:RainbowColor(speed)
     if speed == nil or type(speed) == "number" and speed <= 0 then
         speed = 1
@@ -65,12 +93,25 @@ end
 local function ColorInvert(c)
     return Color(255-c.r,255-c.g,255-c.b,c.a)
 end
+--- Inverts the color. This method does not change alpha channel during transformation.
+--- 
+--- No need to use `ADYLIB:ToGmodColor(...)` as this method automatically validates the color.
+---@param r table|number
+---@param g? number
+---@param b? number
+---@param a? number
+---@return Color
 function ADYLIB:InvertColor(r,g,b,a)
     return ColorInvert(self:ToGModColor(r,g,b,a))
 end
 
 -- Blur
 local BLUR = Material("pp/blurscreen")
+--- **[Client]** This method be called in Paint methods as it uses `surface` class.
+--- 
+--- Allows to easily draw blur texture with specified blur depth.
+---@param panel Panel
+---@param depth number
 function ADYLIB:DrawBlurTexture(panel, depth)
     if depth == nil then
         depth = 3
