@@ -1,2 +1,4 @@
 .vscode
-resource/
+resource
+lua/autorun/client/cl_adytest.lua
+lua/autorun/server/sv_adytest.lua

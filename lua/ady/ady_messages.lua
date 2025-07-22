@@ -53,10 +53,11 @@ if SERVER then
             if type(part) == "string" then
                 net.WriteString(part)
             else
+                net.WriteInt(1, 8)
                 net.WriteColor(part, true)
             end
         end
-        
+        net.WriteInt(2,8)
         if players == nil then
             net.Broadcast()
         else
@@ -72,17 +73,16 @@ if CLIENT then
         chat.AddText(unpack(self.Parts))
     end
 
-    net.Receive("ADY:Message", function (len)
+    net.Receive("ADY:Message", function(len)
         local parts = {}
         local active = true
         while active do
-            local color = net.ReadColor(true)
-            if not color.a or color.a == 0 then
-                active = false
-            else
+            active = net.ReadInt(8) == 1
+            if active then
+                local color = net.ReadColor(true)
                 local text = net.ReadString()
                 table.insert(parts, color)
-                table.insert(parts, text)
+                if text ~= ""  then table.insert(parts, text) end
             end
         end
 
@@ -95,11 +95,11 @@ end
 --- Argument should be a table with strict construction:
 --- `{[1] = {text="Any string", color=Color(a,b,c,d)}, [2] = {...}, ...}`
 ---@name ADYLIB:Message
----@param msgs (string|Color)[]
+---@param parts? (string|Color)[]
 ---@return MessageBuilder MessageBuilder instance of Message to generate
-function ADYLIB:Message(msgs)
+function ADYLIB:Message(parts)
     local object = {}
-    object.msgs = msgs or {}
     setmetatable(object, MessageBuilder)
+    object.Parts = parts or {}
     return object
 end
