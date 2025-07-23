@@ -35,6 +35,7 @@ end
 function PANEL:OnMousePressed(mouseCode)
     if self.Blocked then return end
     if mouseCode ~= MOUSE_LEFT then return end
+    self:MouseCapture(true)
     self.Dragged = true
     local mouseX, mouseY = gui.MousePos()
     self.DragOffset.x = mouseX - self.MoveTarget.x
@@ -44,16 +45,9 @@ end
 
 function PANEL:OnMouseReleased(mouseCode)
     if mouseCode ~= MOUSE_LEFT then return end
+    self:MouseCapture(false)
     self.Dragged = false
-    self:OnCursorEntered()
-end
-
-function PANEL:OnCursorEntered()
     self:SetCursor("hand")
-end
-
-function PANEL:OnCursorExited()
-    self:OnMouseReleased(MOUSE_LEFT)
 end
 
 function PANEL:Think()
