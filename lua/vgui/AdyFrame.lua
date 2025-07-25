@@ -31,7 +31,8 @@ function PANEL:Init()
         if not round or round < 0 then round = 0 end
         draw.RoundedBox(round, 0, 0, w, h, Color(26,26,26))
     end
-    self.Titlebar.IconScale = 0.45
+    self.Titlebar.Buttons = {}
+    self.Titlebar.IconScale = 0.5
     self.Titlebar.Icon = nil
     self.Titlebar.IconColor = nil
     self.Titlebar.TitleMargin = ADYLIB:ScaleUI(5)
@@ -49,25 +50,34 @@ function PANEL:Init()
     self.Titlebar.Marginer:SetMouseInputEnabled(false)
     function self.Titlebar.Marginer:Paint() end
 
-
-    self.Titlebar.CloseButton = vgui.Create("DButton", self.Titlebar)
+    -- self.Titlebar.CloseButton = vgui.Create("DButton", self.Titlebar)
+    -- self.Titlebar.CloseButton:Dock(RIGHT)
+    -- self.Titlebar.CloseButton:SetText("")
+    -- function self.Titlebar.CloseButton:DoClick()
+    --     local titlebar = self:GetParent()
+    --     if not IsValid(titlebar) then return end
+    --     local pnl = titlebar:GetParent()
+    --     if not IsValid(pnl) then return end
+    --     pnl:Close()
+    -- end
+    -- local crossMaterial = Material("ady/cross.png")
+    -- function self.Titlebar.CloseButton:Paint(w,h)
+    --     local titlebar = self:GetParent()
+    --     local size = w * titlebar.IconScale
+    --     local pos = w/2 - size/2
+    --     surface.SetDrawColor(color_white)
+    --     surface.SetMaterial(crossMaterial)
+    --     surface.DrawTexturedRect(pos, pos, size, size)
+    -- end
+    self.Titlebar.CloseButton = self:CreateButton("Close", Material("ady/cross.png"))
+    self.Titlebar.CloseButton.HoverColor = Color(255,77,92)
     self.Titlebar.CloseButton:Dock(RIGHT)
-    self.Titlebar.CloseButton:SetText("")
     function self.Titlebar.CloseButton:DoClick()
         local titlebar = self:GetParent()
         if not IsValid(titlebar) then return end
         local pnl = titlebar:GetParent()
         if not IsValid(pnl) then return end
         pnl:Close()
-    end
-    local crossMaterial = Material("ady/cross.png")
-    function self.Titlebar.CloseButton:Paint(w,h)
-        local titlebar = self:GetParent()
-        local size = w * titlebar.IconScale
-        local pos = w/2 - size/2
-        surface.SetDrawColor(color_white)
-        surface.SetMaterial(crossMaterial)
-        surface.DrawTexturedRect(pos, pos, size, size)
     end
     
     self.Titlebar.Title = vgui.Create("DPanel", self.Titlebar)
@@ -114,7 +124,9 @@ end
 function PANEL:PerformLayout(w,h)
     self.Titlebar:SetWide(w)
     local titlebarTall = self.Titlebar:GetTall()
-    self.Titlebar.CloseButton:SetSize(titlebarTall, titlebarTall)
+    for _, button in ipairs(self.Titlebar.Buttons) do
+        button:SetSize(titlebarTall, titlebarTall)
+    end
 
     self.Titlebar.Marginer:SetSize(self.RoundRadius/2, titlebar)
 
@@ -244,6 +256,29 @@ function PANEL:IsIgnoringBounds()
 end
 function PANEL:IgnoreBounds(ignore)
     self.Titlebar:IgnoreBounds(ignore)
+end
+
+function PANEL:CreateButton(name, icon)
+    local button = vgui.Create("DButton", self.Titlebar)
+    button.Name = name
+    button:SetText("")
+    button:SetTooltip(name)
+    function button:Paint(w,h)
+        local titlebar = self:GetParent()
+        local size = w * titlebar.IconScale
+        local pos = w/2 - size/2
+        if self:IsHovered() then
+            surface.SetDrawColor(self.HoverColor or color_white)
+        elseif self.Color then
+            surface.SetDrawColor(self.Color)
+        else
+            surface.SetDrawColor(Color(255,255,255,180))
+        end
+        surface.SetMaterial(icon)
+        surface.DrawTexturedRect(pos, pos, size, size)
+    end
+    table.insert(self.Titlebar.Buttons, button)
+    return button
 end
 
 vgui.Register("AdyFrame", PANEL, "DFrame")
