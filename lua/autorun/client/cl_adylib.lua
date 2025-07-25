@@ -67,13 +67,13 @@ function ADYLIB:ToGModColor(r,g,b,a)
             if r.r == nil then r.r = 0 end
             if r.g == nil then r.g = 0 end
             if r.b == nil then r.b = 0 end
-            if r.a == nil then r.a = 0 end
+            if r.a == nil then r.a = 255 end
             return r
         end
     end
     if g == nil or type(g) ~= "number" then g = 0 end
     if b == nil or type(b) ~= "number" then b = 0 end
-    if a == nil or type(a) ~= "number" then a = 0 end
+    if a == nil or type(a) ~= "number" then a = 255 end
     return Color(r,g,b,a)
 end
 --- **[Client]** Returns a smoothly transitioning rainbow color based on the current time.
@@ -105,9 +105,15 @@ function ADYLIB:InvertColor(r,g,b,a)
     return ColorInvert(self:ToGModColor(r,g,b,a))
 end
 
+function ADYLIB:LightenColor(r,g,b,a)
+    local color = self:ToGModColor(r,g,b,a)
+    local diff = math.min(255 - color.r, 255 - color.g, 255 - color.b)
+    return Color(color.r + diff, color.g + diff, color.b + diff, color.a)
+end
+
 -- Blur
 local BLUR = Material("pp/blurscreen")
---- **[Client]** This method be called in Paint methods as it uses `surface` class.
+--- **[Client]** This method should be called in Paint methods as it uses `surface` class.
 --- 
 --- Allows to easily draw blur texture with specified blur depth.
 ---@param panel Panel
