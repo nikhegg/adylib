@@ -40,7 +40,7 @@ function MessageBuilder:GetDefaultColor()
 end
 
 if SERVER then
-    util.AddNetworkString("ADY:Message")
+    util.AddNetworkString("ADY/Message")
 
     --- **[Server]** Send built message to player or players.
     --- 
@@ -73,7 +73,7 @@ if CLIENT then
         chat.AddText(unpack(self.Parts))
     end
 
-    net.Receive("ADY:Message", function(len)
+    net.Receive("ADY/Message", function(len)
         local parts = {}
         local active = true
         while active do
