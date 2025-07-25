@@ -8,7 +8,7 @@ function PANEL:Init()
     self.BackgroundColor = Color(0,0,0,50)
     self.BlurDepth = 0
     self.CornerRound = 0
-    self:SetupHeader("WIndow")
+    self:SetupHeader("Window")
 end
 
 function PANEL:SetupHeader(text)
@@ -150,4 +150,4 @@ function PANEL:Paint(w,h)
     masks.End()
 end
 
-vgui.Register("AdyFrame", PANEL, "DFrame")
+vgui.Register("AdyBlurFrame", PANEL, "DFrame")

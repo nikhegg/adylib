@@ -8,6 +8,10 @@ function PANEL:Init()
     self.BoundsIgnored = false
 end
 
+function PANEL:IsBlocked()
+    return self.Blocked
+end
+
 function PANEL:Block()
     self.Blocked = true
 end

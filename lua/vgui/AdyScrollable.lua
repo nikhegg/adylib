@@ -2,6 +2,7 @@ local PANEL_CLASS = "AdyScrollable"
 local PANEL = {}
 
 function PANEL:Init()
+
     self.Canvas = vgui.Create("DPanel", self)
     self.Canvas:SetPaintBackground(false)
     function self.Canvas:OnMouseWheeled(delta)
@@ -13,23 +14,27 @@ function PANEL:Init()
     -- Scrolling
     self.IsXScrollAllowed = true
     self.IsYScrollAllowed = true
+
     self.TargetOffset = {
         x = 0,
         y = 0
     }
 
-    self.VerticalOverflow = false
-    self.HorizontalOverflow = false
-
-    self.ScrollPower = 40
+    self.ScrollPower = 100
     self.ScrollSpeed = 5
     self.MaxOverscroll = 120
 
-    self.VerticalScrollbar = nil
-    self.HorizontalScrollbar = nil
-    -- Scrolling
+    self.VerticalScrollbar = vgui.Create("AdyScrollbar")
+    self.VerticalScrollbar:SetWide(8)
+    self.VerticalScrollbar:SetParent(self)
+    self.HorizontalScrollbar = vgui.Create("AdyScrollbar")
+    self.HorizontalScrollbar:SetTall(8)
+    self.HorizontalScrollbar:SetParent(self)
+    self.HorizontalScrollbar:SetVertical(false)
+    -- Scolling
 
     self:SetMouseInputEnabled(true)
+    self:SetKeyboardInputEnabled(false)
 end
 
 function PANEL:IsValid()
@@ -39,13 +44,16 @@ function PANEL:IsValid()
 end
 
 function PANEL:OnMouseWheeled(delta)
+    if self.VerticalScrollbar and self.VerticalScrollbar.Dragging then return end
+    if self.HorizontalScrollbar and self.HorizontalScrollbar.Dragging then return end
     -- if not self:IsHovered() then return end
-    if self.IsYScrollAllowed and self.VerticalOverflow then
+
+    if self.IsYScrollAllowed and --[[self.VerticalOverflow]] self.VerticalScrollbar:IsVisible() and not self.HorizontalScrollbar:IsHovered() then
         -- local newY = self.TargetOffset.y - delta * self.ScrollPower
         -- local leftY = self.Canvas:GetTall() - self:GetTall()
         -- self.TargetOffset.y = math.Clamp(newY, 0, math.max(0, leftY))
         self.TargetOffset.y = self.TargetOffset.y - delta * self.ScrollPower
-    elseif self.IsXScrollAllowed and self.HorizontalOverflow then
+    elseif self.IsXScrollAllowed and --[[self.HorizontalOverflow]] self.HorizontalScrollbar:IsVisible() and not self.VerticalScrollbar:IsHovered() then
         -- local newX = self.TargetOffset.x - delta * self.ScrollPower
         -- local leftX = self.Canvas:GetWide() - self:GetWide()
         -- self.TargetOffset.x = math.Clamp(newX, 0, math.max(0, leftX))
@@ -85,7 +93,6 @@ function PANEL:PerformLayout(w,h)
     -- Try no limits mode
     local canvasX, canvasY = self.Canvas:GetSize()
     local selfX, selfY = self:GetSize()
-    -- Add Scrollbar size
     
     local maxOffsetX = math.max(0, canvasX - selfX)
     local maxOffsetY = math.max(0, canvasY - selfY)
@@ -100,20 +107,26 @@ function PANEL:LayoutChildren()
             local x,y = child:GetPos()
             maxX = math.max(maxX, x + child:GetWide())
             maxY = math.max(maxY, y + child:GetTall())
+            if child:GetDock() == FILL then
+                maxX = self:GetViewportWide()
+            end
         end
     end
     self.Canvas:SetSize(maxX, maxY)
 
     local selfW, selfT = self:GetSize()
-    self.VerticalOverflow = (selfT < maxY)
-    self.HorizontalOverflow = (selfW < maxX)
+    -- self.VerticalOverflow = (selfT < maxY)
+    -- self.VerticalScrollbar:SetVisible(self.VerticalOverflow)
+    -- self.HorizontalOverflow = (selfW < maxX)
+    -- self.HorizontalScrollbar:SetVisible(self.HorizontalOverflow)
+    self.VerticalScrollbar:SetVisible(selfT < maxY)
+    self.HorizontalScrollbar:SetVisible(selfW < maxX)
 end
 
 function PANEL:OnChildAdded(child)
     if child == self.Canvas then return end
     if child == self.VerticalScrollbar then return end
     if child == self.HorizontalScrollbar then return end
-
     timer.Simple(0, function()
         if not IsValid(child) or not self:IsValid() then return end
         if not child:GetParent() == self then return end
@@ -127,15 +140,12 @@ function PANEL:Think()
     self:InvalidateLayout(true)
 end
 
-function PANEL:Paint(w,h)
-    surface.SetDrawColor(Color(32,32,32))
-    surface.DrawRect(0,0,w,h)
-end
+function PANEL:Paint(w,h) end
 
 
 -- API
 function PANEL:GetScrollSpeed()
-    return self.ScrollSpeed
+    return self.ScrollSpeed - 3
 end
 function PANEL:SetScrollSpeed(speed)
     if type(speed) ~= "number" or speed <= 0 then speed = 1 end
@@ -167,6 +177,30 @@ function PANEL:EnableVerticalScroll()
 end
 function PANEL:DisableVerticalScroll()
     self.IsYScrollAllowed = false
+end
+function PANEL:GetViewportWide()
+    local w = self:GetWide()
+    if IsValid(self.VerticalScrollbar) and self.VerticalScrollbar:IsVisible() then
+        w = w - self.VerticalScrollbar:GetWide()
+    end
+    return w
+end
+function PANEL:GetViewportTall()
+    local h = self:GetTall()
+    if IsValid(self.HorizontalScrollbar) and self.HorizontalScrollbar:IsVisible() then
+        h = h - self.HorizontalScrollbar:GetTall()
+    end
+    return h
+end
+function PANEL:GetViewportSize()
+    return self:GetViewportWide(), self:GetViewportTall()
+end
+function PANEL:GetScrollbarsMargin()
+    return self.VerticalScrollbar.Margin, self.HorizontalScrollbar.Margin
+end
+function PANEL:SetScrollbarsMargin(margin)
+    self.VerticalScrollbar.Margin = margin
+    self.HorizontalScrollbar.Margin = margin
 end
 
 vgui.Register(PANEL_CLASS, PANEL, "Panel")
