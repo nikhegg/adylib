@@ -1,3 +1,41 @@
 {
-    "settings": "Settings"
+    "settings": "Settings",
+    "close": "Close",
+    "time": {
+        "seconds": {
+            "char": "s",
+            "short": "sec",
+            "one": "second",
+            "few": "seconds",
+            "many": "seconds"
+        },
+        "minutes": {
+            "char": "m",
+            "short": "min",
+            "one": "minute",
+            "few": "minutes",
+            "many": "minutes"
+        },
+        "hours": {
+            "char": "h",
+            "short": "hrs",
+            "one": "hour",
+            "few": "hours",
+            "many": "hours"
+        },
+        "days": {
+            "char": "d",
+            "short": "d",
+            "one": "day",
+            "few": "days",
+            "many": "days"
+        },
+        "months": {
+            "char": "mo",
+            "short": "mo",
+            "one": "month",
+            "few": "months",
+            "many": "months"
+        }
+    }
 }
