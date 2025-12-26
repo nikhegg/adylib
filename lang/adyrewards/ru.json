@@ -1,1 +1,7 @@
-{}
+{
+    "adyrewards": {
+        "daily_rewards": "Ежедневные награды",
+        "raf_refer": "Пригласи друга",
+        "raf_leaderboard": "Таблица лидеров"
+    }
+}
