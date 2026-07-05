@@ -47,6 +47,9 @@ local LEVEL_COLORS = {
 function Addon:__BaseLog(level, ...)
     if level == LogLevel.Debug and not ady.__Debug then return end
 
+    local time = os.date("%H:%M")
+    MsgC(color_white, time, " | ")
+
     local prefixColor = self.__Color or color_white
     MsgC(prefixColor, "[", self.__Name)
 
