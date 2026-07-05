@@ -3,6 +3,7 @@
 ---@field private __Name string
 ---@field private __Color Color|nil
 ---@field private __BaseDir string|nil
+---@field private __Version string|nil
 ---@field private __LoadSilently boolean
 ---@field private __ClientFileCount number
 ---@field private __ServerFileCount number
@@ -11,6 +12,7 @@ Addon.__index = Addon
 Addon.__Name = "Unknown Addon"
 Addon.__Color = nil
 Addon.__BaseDir = nil
+Addon.__Version = nil
 Addon.__LoadSilently = false
 Addon.__ClientFileCount = 0
 Addon.__ServerFileCount = 0
@@ -43,7 +45,7 @@ local LEVEL_COLORS = {
 ---@param level LogLevel
 ---@param ... unknown Strings and Color objects to display in log
 function Addon:__BaseLog(level, ...)
-    if level == LogLevel.Debug and not ADYLIB.Debug then return end
+    if level == LogLevel.Debug and not ady.__Debug then return end
 
     local prefixColor = self.__Color or color_white
     MsgC(prefixColor, "[", self.__Name)
@@ -296,7 +298,7 @@ function ADYLIB:__Load()
     self.__Version = VERSION
     self.__BaseDir = "ady"
     self.__LoadSilently = false
-    self.Debug = true
+    self.__Debug = true
 
     setmetatable(self, Addon)
     Addon.__Load(ADYLIB)
