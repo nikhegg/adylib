@@ -115,9 +115,6 @@ end
 
 
 local blurMat = Material("pp/blurscreen")
-
--- RT занимает размер экрана и хранит смазанный кадр.
--- Создаётся один раз при загрузке файла.
 local blurRT = GetRenderTargetEx(
     "BlurPanel_RT",
     ScrW(), ScrH(),
@@ -127,10 +124,6 @@ local blurRT = GetRenderTargetEx(
     0,
     IMAGE_FORMAT_BGRA8888
 )
-
--- UnlitGeneric для вывода RT как обычной текстуры через DrawPoly.
--- Именно через DrawPoly мы ограничиваем область рисования
--- формой rounded rect без артефактов по краям.
 local blurRTMat = CreateMaterial("BlurPanel_RTMat", "UnlitGeneric", {
     ["$basetexture"] = blurRT:GetName(),
     ["$translucent"] = "1",
@@ -139,11 +132,6 @@ local blurRTMat = CreateMaterial("BlurPanel_RTMat", "UnlitGeneric", {
     ["$nofog"] = "1",
     ["$ignorez"] = "1",
 })
-
--- ── Рендер blur всего экрана в RT ─────────────────────────────
--- Три итерации с нарастающей силой размытия. После каждого
--- прохода результат копируется обратно в effect texture, чтобы
--- следующий проход размывал уже смазанную картинку.
 local function RenderBlurToRT(intensity)
     local sw, sh = ScrW(), ScrH()
 
@@ -161,11 +149,6 @@ local function RenderBlurToRT(intensity)
     cam.End2D()
     render.PopRenderTarget()
 end
-
--- ── Публичная функция ─────────────────────────────────────────
--- Перегрузка через количество аргументов:
---   6 аргументов : DrawBlur(intensity, x, y, w, h, r)          — единый радиус
---   9 аргументов : DrawBlur(intensity, x, y, w, h, tl, tr, br, bl) — каждый угол отдельно
 ---comment
 ---@param intensity number
 ---@param x number
@@ -238,7 +221,6 @@ end
 
 
 -- Lerp
-
 --- **[Client]** A frame-rate aware lerp that eliminates the visual "tail" artifact
 --- common in standard `Lerp` usage, where the value asymptotically approaches the target
 --- but never cleanly snaps to it.
