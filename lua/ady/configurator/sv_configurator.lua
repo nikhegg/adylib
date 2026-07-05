@@ -14,6 +14,11 @@ AdyConfigurator.__Path = ""
 AdyConfigurator.__Config = {}
 AdyConfigurator.AutosaveMins = 0
 AdyConfigurator.LastSaveTime = 0
+---**[Server]** Determines whether the config is empty or not
+---@return boolean
+function AdyConfigurator:IsEmpty()
+    return #self.__Config == 0
+end
 ---**[Server]** Sets config value by key
 ---@param key string
 ---@param value any
