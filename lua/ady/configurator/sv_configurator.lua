@@ -75,7 +75,7 @@ function ADYLIB.Config:Use(path)
     local pathSplit = string.Split(path, "/")
     table.remove(pathSplit, #pathSplit)
 
-    for _, dir in ipairs(path) do
+    for _, dir in ipairs(pathSplit) do
         if not file.IsDir(dir, "DATA") then
             file.CreateDir(dir)
         end
