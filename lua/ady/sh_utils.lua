@@ -23,6 +23,7 @@ function ADYLIB.Utils:ParseSteamID(ply, returnPly)
         else plyToReturn = nil end
     else
         steamID = ply:SteamID()
+        plyToReturn = ply
     end
 
     return steamID, plyToReturn
